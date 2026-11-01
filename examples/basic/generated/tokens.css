@@ -1,0 +1,29 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --color-primitive-white: oklch(1 0 none);
+  --color-primitive-black: oklch(0 0 none);
+  --color-primitive-blue-500: oklch(0.5461 0.2152 262.88);
+  --color-primitive-blue-600: oklch(0.4882 0.2172 264.38);
+  --color-primitive-red-500: oklch(0.5771 0.2152 27.33);
+  --color-semantic-light-brand-primary-10: oklch(0.5461 0.2152 262.88 / 0.1);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --duration-primary: 200ms;
+  --font-fa-primary: "Vazirmatn";
+  --size-body: 14px;
+  --size-heading-lg: 20px;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+  --color-semantic-light-brand-primary: var(--color-primitive-blue-500);
+  --color-semantic-light-brand-on-primary: var(--color-primitive-white);
+  --color-semantic-light-neutral-background: var(--color-primitive-white);
+  --color-semantic-light-neutral-on-background: var(--color-primitive-black);
+  --color-semantic-light-status-error: var(--color-primitive-red-500);
+  --color-semantic-dark-brand-primary: var(--color-primitive-blue-600);
+  --color-semantic-dark-brand-on-primary: var(--color-primitive-white);
+  --color-semantic-dark-neutral-background: var(--color-primitive-black);
+  --color-semantic-dark-neutral-on-background: var(--color-primitive-white);
+}

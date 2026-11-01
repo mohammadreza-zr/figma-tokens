@@ -1,0 +1,35 @@
+{
+  "Font": {
+    "Fa": {
+      "Primary": {
+        "$type": "string",
+        "$value": "Vazirmatn"
+      }
+    }
+  },
+  "Size": {
+    "Body": {
+      "$type": "number",
+      "$value": 14
+    },
+    "Heading": {
+      "Lg": {
+        "$type": "number",
+        "$value": 20
+      }
+    }
+  },
+  "Weight": {
+    "Regular": {
+      "$type": "number",
+      "$value": 400
+    },
+    "Bold": {
+      "$type": "number",
+      "$value": 700
+    }
+  },
+  "$extensions": {
+    "com.figma.modeName": "Mode 1"
+  }
+}

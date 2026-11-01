@@ -1,0 +1,164 @@
+{
+  "Colors": {
+    "Primitive": {
+      "White": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "alpha": 1.0,
+          "hex": "#FFFFFF"
+        }
+      },
+      "Black": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "alpha": 1.0,
+          "hex": "#000000"
+        }
+      },
+      "Blue": {
+        "500": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.1450980392156863,
+              0.38823529411764707,
+              0.9215686274509803
+            ],
+            "alpha": 1.0,
+            "hex": "#2563EB"
+          }
+        },
+        "600": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.11372549019607843,
+              0.3058823529411765,
+              0.8470588235294118
+            ],
+            "alpha": 1.0,
+            "hex": "#1D4ED8"
+          }
+        }
+      },
+      "Red": {
+        "500": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.8627450980392157,
+              0.14901960784313725,
+              0.14901960784313725
+            ],
+            "alpha": 1.0,
+            "hex": "#DC2626"
+          }
+        }
+      }
+    },
+    "Semantic": {
+      "Light": {
+        "Brand": {
+          "Primary": {
+            "$root": {
+              "$type": "color",
+              "$value": "{Colors.Primitive.Blue.500}"
+            },
+            "10": {
+              "$type": "color",
+              "$value": {
+                "colorSpace": "srgb",
+                "components": [
+                  0.1450980392156863,
+                  0.38823529411764707,
+                  0.9215686274509803
+                ],
+                "alpha": 0.1,
+                "hex": "#2563EB"
+              }
+            }
+          },
+          "OnPrimary": {
+            "$type": "color",
+            "$value": "{Colors.Primitive.White}"
+          }
+        },
+        "Neutral": {
+          "Background": {
+            "$type": "color",
+            "$value": "{Colors.Primitive.White}"
+          },
+          "OnBackground": {
+            "$type": "color",
+            "$value": "{Colors.Primitive.Black}"
+          }
+        },
+        "Status": {
+          "Error": {
+            "$type": "color",
+            "$value": "{Colors.Primitive.Red.500}"
+          }
+        }
+      },
+      "Dark": {
+        "Brand": {
+          "Primary": {
+            "$type": "color",
+            "$value": "{Colors.Primitive.Blue.600}"
+          },
+          "OnPrimary": {
+            "$type": "color",
+            "$value": "{Colors.Primitive.White}"
+          }
+        },
+        "Neutral": {
+          "Background": {
+            "$type": "color",
+            "$value": "{Colors.Primitive.Black}"
+          },
+          "OnBackground": {
+            "$type": "color",
+            "$value": "{Colors.Primitive.White}"
+          }
+        }
+      }
+    }
+  },
+  "Radius": {
+    "Sm": {
+      "$type": "number",
+      "$value": 4
+    },
+    "Md": {
+      "$type": "number",
+      "$value": 8
+    }
+  },
+  "Duration": {
+    "Primary": {
+      "$type": "duration",
+      "$value": {
+        "value": 200,
+        "unit": "ms"
+      }
+    }
+  },
+  "$extensions": {
+    "com.figma.modeName": "Mode 1"
+  }
+}

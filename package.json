@@ -1,0 +1,68 @@
+{
+  "name": "@mrzr/figma-tokens",
+  "version": "0.1.0",
+  "description": "Turn Figma design-token exports (DTCG JSON) into CSS variables and a Tailwind CSS v4 theme, with light and dark modes paired automatically.",
+  "keywords": [
+    "figma",
+    "design-tokens",
+    "dtcg",
+    "style-dictionary",
+    "tailwind",
+    "tailwindcss",
+    "css-variables",
+    "oklch",
+    "codegen"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohammadreza-zr/figma-tokens.git"
+  },
+  "homepage": "https://github.com/mohammadreza-zr/figma-tokens#readme",
+  "bugs": {
+    "url": "https://github.com/mohammadreza-zr/figma-tokens/issues"
+  },
+  "type": "module",
+  "bin": {
+    "figma-tokens": "dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "typecheck": "tsc -p . --noEmit",
+    "test": "npm run build && node scripts/test.mjs",
+    "prepublishOnly": "npm test",
+    "docs:sync": "bash scripts/sync-wiki.sh"
+  },
+  "dependencies": {
+    "culori": "^4.0.2",
+    "style-dictionary": "^5.5.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@tailwindcss/node": "^4.3.3",
+    "@types/culori": "^4.0.1",
+    "@types/node": "^26.6.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.2"
+  }
+}
