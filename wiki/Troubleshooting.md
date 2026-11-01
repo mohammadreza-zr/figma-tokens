@@ -6,9 +6,9 @@ Every message below is what the tool prints. `<file>` and `<dir>` stand for abso
 
 ## Messages
 
-### `figma-tokens: no config found; create figma-tokens.config.mjs (see the README)`
+### `figma-tokens: no config found; create figma-tokens.config.yaml (see the README)`
 
-None of `figma-tokens.config.mjs`, `.js`, `.json` is in the folder you ran the command from. Parent folders are not searched. `cd` to the right folder, or pass `--config <file>` ([[CLI]]).
+None of `figma-tokens.config.yaml`, `.yml`, `.mjs`, `.js`, `.json` is in the folder you ran the command from. Parent folders are not searched. `cd` to the right folder, or pass `--config <file>` ([[CLI]]).
 
 ### `figma-tokens: no config at <file>`
 
@@ -21,6 +21,14 @@ The config has no such option ([[Configuration]]).
 ### `figma-tokens: <file> has no default export`
 
 A `.mjs` or `.js` config must `export default` the object (use `defineConfig({ … })`).
+
+### `figma-tokens: <file> must hold a mapping of options`
+
+A YAML config must be `key: value` pairs at the top level, not a list and not empty.
+
+### `figma-tokens: unknown option "aliase" (options: input, outDir, css, …)`
+
+The config has an option the tool does not know, usually a typo. The message lists the valid names, and [[Configuration]] explains each one.
 
 ### `figma-tokens: input folder not found: <dir>`
 

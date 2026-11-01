@@ -48,7 +48,7 @@ Returns the paths whose file is missing or whose content differs from what `gene
 ```js
 import { generate, loadConfig, stale, write } from "@mrzr/figma-tokens";
 
-const config = await loadConfig("figma-tokens.config.mjs");
+const config = await loadConfig("figma-tokens.config.yaml");
 const files = await generate(config, process.cwd());
 if (stale(files).length > 0) write(files);
 ```
@@ -63,7 +63,7 @@ Returns the object you pass. It only gives your editor the types.
 resolveConfig(config: FigmaTokensConfig): ResolvedConfig
 ```
 
-Applies every default ([[Configuration]]), merges `collections` over `DEFAULT_COLLECTIONS` and lower-cases `px` and `primitives.keep`. Throws when `input` or `outDir` is missing. `generate` calls it for you.
+Applies every default ([[Configuration]]), merges `collections` over `DEFAULT_COLLECTIONS` and lower-cases `px` and `primitives.keep`. Throws when `input` or `outDir` is missing, and for an option name it does not know. `generate` calls it for you.
 
 ## `findConfig(cwd, explicit?)`
 
@@ -71,7 +71,7 @@ Applies every default ([[Configuration]]), merges `collections` over `DEFAULT_CO
 findConfig(cwd: string, explicit?: string): string
 ```
 
-Returns the absolute path of the config: `explicit` resolved against `cwd`, or the first of the three default names found in `cwd`. Throws `figma-tokens: no config at <file>` or `figma-tokens: no config found; create figma-tokens.config.mjs (see the README)`.
+Returns the absolute path of the config: `explicit` resolved against `cwd`, or the first of the five default names found in `cwd` (`.yaml`, `.yml`, `.mjs`, `.js`, `.json`, in that order). Throws `figma-tokens: no config at <file>` or `figma-tokens: no config found; create figma-tokens.config.yaml (see the README)`.
 
 ## `loadConfig(file)`
 
@@ -79,7 +79,7 @@ Returns the absolute path of the config: `explicit` resolved against `cwd`, or t
 loadConfig(file: string): Promise<FigmaTokensConfig>
 ```
 
-Parses a `.json` file, or imports any other file and returns its default export. Throws `figma-tokens: <file> has no default export` when there is none. The paths in the result are **not** resolved: pass the folder of the config file as `cwd` to `generate`, as the CLI does.
+Parses a `.yaml` or `.yml` file as YAML and a `.json` file as JSON; any other file is imported and its default export returned. Throws `figma-tokens: <file> must hold a mapping of options` for a YAML file that is not a mapping, and `figma-tokens: <file> has no default export` for a script without one. The paths in the result are **not** resolved: pass the folder of the config file as `cwd` to `generate`, as the CLI does.
 
 ## `DEFAULT_COLLECTIONS`
 

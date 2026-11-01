@@ -23,6 +23,18 @@ function leaves(node: unknown, prefix: string[] = [], out: string[][] = []) {
   return out;
 }
 
+function indent(text: string): string {
+  const lines = text.split("\n");
+  while (lines.length && !lines[0].trim()) lines.shift();
+  while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+  const margin = Math.min(
+    ...lines.filter((l) => l.trim()).map((l) => l.match(/^\s*/)![0].length),
+  );
+  return lines
+    .map((l) => (l.trim() ? `  ${l.slice(margin).trimEnd()}` : ""))
+    .join("\n");
+}
+
 export function buildTailwind(merged: Tree, config: ResolvedConfig): string {
   const { semantic, primitives } = config;
 
@@ -85,7 +97,7 @@ export function buildTailwind(merged: Tree, config: ResolvedConfig): string {
     aliasBlock,
     sizeBlock,
     durationBlock,
-    config.extra.replace(/^(\s*\n)+/, "").trimEnd(),
+    indent(config.extra),
   ]
     .filter(Boolean)
     .join("\n");

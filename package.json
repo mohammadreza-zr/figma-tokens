@@ -1,6 +1,6 @@
 {
   "name": "@mrzr/figma-tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Turn Figma design-token exports (DTCG JSON) into CSS variables and a Tailwind CSS v4 theme, with light and dark modes paired automatically.",
   "keywords": [
     "figma",
@@ -53,7 +53,8 @@
   },
   "dependencies": {
     "culori": "^4.0.2",
-    "style-dictionary": "^5.5.0"
+    "style-dictionary": "^5.5.0",
+    "yaml": "^2.9.1"
   },
   "publishConfig": {
     "access": "public"

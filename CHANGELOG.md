@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0
+
+- The config can be YAML: `figma-tokens.config.yaml` or `.yml`, searched before `.mjs`, `.js` and `.json`. YAML allows comments and a block of CSS for `extra`.
+- An option the tool does not know, such as a typo, is now an error that lists the valid options. Before, it was ignored.
+- `extra` is written with the same indentation whatever indentation it came with: the common indentation is removed and each line gets two spaces. Before, your indentation was kept.
+- A YAML config that is not a mapping stops with `figma-tokens: <file> must hold a mapping of options`.
+
 ## 0.1.0
 
 First release.

@@ -20,10 +20,10 @@ npx @mrzr/figma-tokens
 | | |
 |---|---|
 | **Node.js** | 22 or newer. The package declares `"engines": { "node": ">=22" }` because Style Dictionary 5 requires it. |
-| **Module type** | ESM. The package has `"type": "module"`; the config file can be `.mjs`, `.js` or `.json`. |
+| **Module type** | ESM. The package has `"type": "module"`. The config file can be YAML (`.yaml`, `.yml`), JSON, or JavaScript (`.mjs`, `.js`). |
 | **Tailwind** | Not a dependency. The generated `tailwind.css` targets v4 and is tested against 4.3.3. `tokens.css` is plain CSS and needs nothing. |
 
-Dependencies installed with it: `style-dictionary` (5.x) and `culori` (4.x). There are no peer dependencies.
+Dependencies installed with it: `style-dictionary` (5.x), `culori` (4.x) and `yaml` (2.x). There are no peer dependencies.
 
 ---
 

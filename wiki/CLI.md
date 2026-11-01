@@ -21,14 +21,16 @@ Any other argument stops with `figma-tokens: unknown argument "--chek" (see --he
 
 Without `--config`, the command looks in the **current directory** (not in parent folders) for, in this order:
 
-1. `figma-tokens.config.mjs`
-2. `figma-tokens.config.js`
-3. `figma-tokens.config.json`
+1. `figma-tokens.config.yaml`
+2. `figma-tokens.config.yml`
+3. `figma-tokens.config.mjs`
+4. `figma-tokens.config.js`
+5. `figma-tokens.config.json`
 
 With `--config`, that file is used and must exist. Relative `input` and `outDir` are resolved against the folder of the config file, so this works from any directory:
 
 ```bash
-npx @mrzr/figma-tokens --config design/figma-tokens.config.mjs
+npx @mrzr/figma-tokens --config design/figma-tokens.config.yaml
 ```
 
 ## Writing

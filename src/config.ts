@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { parse as parseYaml } from "yaml";
 
 export interface FigmaTokensConfig {
   /** Folder holding the Figma `*.json` exports (DTCG). */
@@ -63,7 +64,30 @@ export function defineConfig(config: FigmaTokensConfig): FigmaTokensConfig {
   return config;
 }
 
+const OPTIONS = [
+  "input",
+  "outDir",
+  "css",
+  "tailwind",
+  "collections",
+  "px",
+  "selector",
+  "darkSelector",
+  "semantic",
+  "primitives",
+  "aliases",
+  "fontSans",
+  "extra",
+];
+
 export function resolveConfig(config: FigmaTokensConfig): ResolvedConfig {
+  for (const key of Object.keys(config)) {
+    if (!OPTIONS.includes(key)) {
+      throw new Error(
+        `figma-tokens: unknown option "${key}" (options: ${OPTIONS.join(", ")})`,
+      );
+    }
+  }
   if (!config.input) throw new Error("figma-tokens: `input` is required");
   if (!config.outDir) throw new Error("figma-tokens: `outDir` is required");
   return {
@@ -91,6 +115,8 @@ export function resolveConfig(config: FigmaTokensConfig): ResolvedConfig {
 }
 
 const CONFIG_NAMES = [
+  "figma-tokens.config.yaml",
+  "figma-tokens.config.yml",
   "figma-tokens.config.mjs",
   "figma-tokens.config.js",
   "figma-tokens.config.json",
@@ -114,6 +140,13 @@ export function findConfig(cwd: string, explicit?: string): string {
 export async function loadConfig(file: string): Promise<FigmaTokensConfig> {
   if (file.endsWith(".json")) {
     return JSON.parse(readFileSync(file, "utf8")) as FigmaTokensConfig;
+  }
+  if (file.endsWith(".yaml") || file.endsWith(".yml")) {
+    const parsed: unknown = parseYaml(readFileSync(file, "utf8"));
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error(`figma-tokens: ${file} must hold a mapping of options`);
+    }
+    return parsed as FigmaTokensConfig;
   }
   const mod = (await import(pathToFileURL(file).href)) as {
     default?: FigmaTokensConfig;

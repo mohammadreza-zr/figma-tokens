@@ -1,26 +1,29 @@
 # Configuration
 
-The config is a file named `figma-tokens.config.mjs`, `figma-tokens.config.js` or `figma-tokens.config.json` (searched in that order, in the folder you run the command from), or any file you pass with `--config`. A `.mjs` or `.js` file default-exports the object; `defineConfig` only adds types:
+The config is a file named `figma-tokens.config.yaml`, `.yml`, `.mjs`, `.js` or `.json` (searched in that order, in the folder you run the command from), or any file you pass with `--config`. YAML is the one the examples use. It allows comments and a block of CSS for `extra`:
 
-<!-- verbatim: examples/basic/figma-tokens.config.mjs -->
-```js
-import { defineConfig } from "@mrzr/figma-tokens";
+<!-- verbatim: examples/basic/figma-tokens.config.yaml -->
+```yaml
+input: tokens
+outDir: generated
 
-export default defineConfig({
-  input: "tokens",
-  outDir: "generated",
-  primitives: { keep: ["white", "black"] },
-  fontSans: "font-fa-primary",
-  aliases: {
-    primary: "brand-primary",
-    "primary-foreground": "brand-on-primary",
-    background: "neutral-background",
-    foreground: "neutral-on-background",
-    destructive: "status-error",
-  },
-  extra: "  --radius: var(--radius-md);",
-});
+primitives:
+  keep: [white, black]
+
+fontSans: font-fa-primary
+
+aliases:
+  primary: brand-primary
+  primary-foreground: brand-on-primary
+  background: neutral-background
+  foreground: neutral-on-background
+  destructive: status-error
+
+extra: |
+  --radius: var(--radius-md);
 ```
+
+An option the tool does not know, such as a typo, stops the build with a message that lists the valid names.
 
 **Relative paths are relative to the folder that holds the config file**, not to where you run the command.
 
@@ -61,8 +64,9 @@ Maps a Figma collection to the namespace used in variable names. Your entries ar
 
 Names match exactly, including case. A collection called `Palette` is not renamed, so its variables are named `--palette-…` and `tailwind.css` finds no colours. Map it:
 
-```js
-collections: { Palette: "color" }
+```yaml
+collections:
+  Palette: color
 ```
 
 The semantic and primitive colours must end up under the namespace **`color`**: that name is fixed.
@@ -71,15 +75,15 @@ The semantic and primitive colours must end up under the namespace **`color`**: 
 
 A plain number gets `px` under `radius`, `size`, `sizes` and `text`. Add other namespaces here. The names are compared in lower case:
 
-```js
-px: ["spacing"]   // --spacing-sm: 4  becomes  --spacing-sm: 4px
+```yaml
+px: [spacing]   # --spacing-sm: 4  becomes  --spacing-sm: 4px
 ```
 
 ## `selector` and `darkSelector`
 
 `selector` carries the variables in `tokens.css` and the light layer in `tailwind.css`. `darkSelector` carries the dark layer. For dark mode through an attribute:
 
-```js
+```yaml
 darkSelector: '[data-theme="dark"]'
 ```
 
@@ -89,16 +93,21 @@ If you change it, change the Tailwind `@custom-variant` as well ([[Tailwind-Outp
 
 The group that holds the semantic colours, and the names of its light and dark children, **below the colour collection**. They are matched without regard to case; write them as they are spelled in the file. The defaults fit `Colors → Semantic → Light` and `Colors → Semantic → Dark`:
 
-```js
-semantic: { group: "Theme", light: "Day", dark: "Night" }
+```yaml
+semantic:
+  group: Theme
+  light: Day
+  dark: Night
 ```
 
 ## `primitives`
 
 `group` is the name of the raw palette group, default `primitive` (some Figma files spell it `Premitive`; write what your file has). `keep` lists the primitives that get a Tailwind utility. A name in `keep` is compared, in lower case, with the **first segment after the group**, so `keep: ["blue"]` keeps every shade under `Primitive → Blue`:
 
-```js
-primitives: { group: "Premitive", keep: ["white", "black"] }
+```yaml
+primitives:
+  group: Premitive
+  keep: [white, black]
 ```
 
 Primitives not in `keep` stay in `tokens.css` and keep working as the target of references. They only get no utility.
@@ -107,27 +116,31 @@ Primitives not in `keep` stay in `tokens.css` and keep working as the target of 
 
 `{ alias: target }` writes `--color-alias: var(--color-target)` in the last `@theme inline` block, so `bg-alias` works. The target is a semantic colour name, like `brand-primary`. It is **not checked**:
 
-```js
-aliases: { primary: "brand-primary", background: "neutral-background" }
+```yaml
+aliases:
+  primary: brand-primary
+  background: neutral-background
 ```
 
 ## `fontSans`
 
-The name of the font variable, without the dashes. `fontSans: "font-fa-primary"` writes `--font-sans: var(--font-fa-primary);` in `:root` and `--font-sans: var(--font-sans);` in the theme block, so Tailwind's `font-sans` uses your font.
+The name of the font variable, without the dashes. `fontSans: font-fa-primary` writes `--font-sans: var(--font-fa-primary);` in `:root` and `--font-sans: var(--font-sans);` in the theme block, so Tailwind's `font-sans` uses your font.
 
 ## `extra`
 
-Raw CSS appended to the last `@theme inline` block, after the generated lines. Leading blank lines and trailing spaces are removed; your indentation is kept:
+Raw CSS appended to the last `@theme inline` block, after the generated lines. The common indentation of your lines is removed and every line is then indented by two spaces, so the result is the same whatever indentation you wrote. Blank lines inside are kept; blank lines at the start and the end are not. In YAML, a block scalar (`|`) is the natural way to write it:
 
-```js
-extra: "  --radius: var(--radius-md);"
+```yaml
+extra: |
+  --radius: var(--radius-md);
+  --shadow-soft: 0 2px 7px -4px var(--color-neutral-shadow);
 ```
 
 ---
 
-## From JSON
+## Other formats
 
-The same options in `figma-tokens.config.json`:
+The same options as JSON, in `figma-tokens.config.json` (no comments, and `extra` is one string with `\n`):
 
 ```json
 {
@@ -138,6 +151,17 @@ The same options in `figma-tokens.config.json`:
 }
 ```
 
+Or as JavaScript, in `figma-tokens.config.mjs` (or `.js` in a project with `"type": "module"`), which default-exports the object. `defineConfig` only gives your editor the types:
+
+```js
+import { defineConfig } from "@mrzr/figma-tokens";
+
+export default defineConfig({
+  input: "tokens",
+  outDir: "generated",
+});
+```
+
 ## Errors
 
-A missing `input` or `outDir` stops with ``figma-tokens: `input` is required`` (or `outDir`). A `.mjs` or `.js` file without a default export stops with `figma-tokens: <file> has no default export`.
+A missing `input` or `outDir` stops with ``figma-tokens: `input` is required`` (or `outDir`). An unknown option stops with `figma-tokens: unknown option "<name>" (options: …)`. A YAML file that is not a mapping stops with `figma-tokens: <file> must hold a mapping of options`, and a `.mjs` or `.js` file without a default export with `figma-tokens: <file> has no default export`. See [[Troubleshooting]].

@@ -12,7 +12,7 @@ const example = path.join(root, "examples/basic");
 const fixtures = path.join(example, "tokens");
 const cli = path.join(root, "dist/cli.js");
 
-const config = await loadConfig(path.join(example, "figma-tokens.config.mjs"));
+const config = await loadConfig(path.join(example, "figma-tokens.config.yaml"));
 
 const byName = (files, name) =>
   files.find((f) => f.path.endsWith(name)).content;
@@ -334,4 +334,58 @@ test("stale ignores line-ending differences, so a CRLF checkout still passes --c
   assert.deepEqual(stale(crlf), []);
   writeFileSync(crlf[0].path, crlf[0].content.replace("8px", "9px"));
   assert.deepEqual(stale(crlf), [crlf[0].path]);
+});
+
+const inTempProject = (files) => {
+  const dir = mkdtempSync(path.join(tmpdir(), "figma-tokens-"));
+  cpSync(fixtures, path.join(dir, "tokens"), { recursive: true });
+  for (const [name, content] of Object.entries(files)) writeFileSync(path.join(dir, name), content);
+  return dir;
+};
+const runIn = (dir, ...args) => spawnSync(process.execPath, [cli, ...args], { cwd: dir, encoding: "utf8" });
+
+test("CLI: a YAML config is found and its comments and block text work", () => {
+  const dir = inTempProject({
+    "figma-tokens.config.yaml": "# where the exports are\ninput: tokens\noutDir: out\naliases:\n  primary: brand-primary\nextra: |\n  --radius: var(--radius-md);\n",
+  });
+  assert.equal(runIn(dir).status, 0);
+  const tw = readFileSync(path.join(dir, "out/tailwind.css"), "utf8");
+  assert.match(tw, /^ {2}--color-primary: var\(--color-brand-primary\);$/m);
+  assert.match(tw, /^ {2}--radius: var\(--radius-md\);$/m);
+});
+
+test("CLI: .yml, .mjs and .js configs are found too", () => {
+  const yml = inTempProject({ "figma-tokens.config.yml": "input: tokens\noutDir: out\n" });
+  assert.equal(runIn(yml).status, 0);
+  for (const name of ["figma-tokens.config.mjs", "figma-tokens.config.js"]) {
+    const dir = inTempProject({ [name]: 'export default { input: "tokens", outDir: "out" };\n', "package.json": '{"type":"module"}' });
+    assert.equal(runIn(dir).status, 0, name);
+    assert.ok(readFileSync(path.join(dir, "out/tokens.css"), "utf8").includes("--radius-md"));
+  }
+});
+
+test("a YAML file that is not a mapping is rejected", () => {
+  const dir = inTempProject({ "figma-tokens.config.yaml": "- input\n- outDir\n" });
+  const r = runIn(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /figma-tokens\.config\.yaml must hold a mapping of options/);
+});
+
+test("an unknown option is an error that lists the valid ones", async () => {
+  await assert.rejects(
+    generate({ input: fixtures, outDir: "out", aliase: {} }, example),
+    /unknown option "aliase" \(options: input, outDir, css, tailwind, collections, px, selector, darkSelector, semantic, primitives, aliases, fontSans, extra\)/,
+  );
+});
+
+test("extra is written with the same indentation whatever indentation it came with", async () => {
+  const lines = ["--a: 1;", "", "/* note */", "--b: 2;"];
+  const variants = [lines.join("\n"), lines.map((l) => (l ? `    ${l}` : l)).join("\n"), `\n\n${lines.map((l) => (l ? `  ${l}` : l)).join("\n")}\n\n`];
+  const outputs = [];
+  for (const extra of variants) {
+    const tw = byName(await generate({ ...config, extra }, example), "tailwind.css");
+    outputs.push(tw.slice(tw.indexOf("--a: 1;") - 2, tw.indexOf("--b: 2;") + 7));
+  }
+  assert.equal(outputs[0], "  --a: 1;\n\n  /* note */\n  --b: 2;");
+  assert.deepEqual(outputs, [outputs[0], outputs[0], outputs[0]]);
 });

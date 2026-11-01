@@ -12,26 +12,27 @@ Figma adds `$extensions` entries to its export (`com.figma.variableId`, `com.fig
 
 ## 2. Write the config
 
-`figma-tokens.config.mjs`, next to your `package.json`:
+`figma-tokens.config.yaml`, next to your `package.json`:
 
-<!-- verbatim: examples/basic/figma-tokens.config.mjs -->
-```js
-import { defineConfig } from "@mrzr/figma-tokens";
+<!-- verbatim: examples/basic/figma-tokens.config.yaml -->
+```yaml
+input: tokens
+outDir: generated
 
-export default defineConfig({
-  input: "tokens",
-  outDir: "generated",
-  primitives: { keep: ["white", "black"] },
-  fontSans: "font-fa-primary",
-  aliases: {
-    primary: "brand-primary",
-    "primary-foreground": "brand-on-primary",
-    background: "neutral-background",
-    foreground: "neutral-on-background",
-    destructive: "status-error",
-  },
-  extra: "  --radius: var(--radius-md);",
-});
+primitives:
+  keep: [white, black]
+
+fontSans: font-fa-primary
+
+aliases:
+  primary: brand-primary
+  primary-foreground: brand-on-primary
+  background: neutral-background
+  foreground: neutral-on-background
+  destructive: status-error
+
+extra: |
+  --radius: var(--radius-md);
 ```
 
 `input` and `outDir` are the only required options. Relative paths are relative to the folder that holds the config file. Every option is described in [[Configuration]].
