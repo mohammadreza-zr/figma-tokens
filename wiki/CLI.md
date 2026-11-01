@@ -23,9 +23,13 @@ Without `--config`, the command looks in the **current directory** (not in paren
 
 1. `figma-tokens.config.yaml`
 2. `figma-tokens.config.yml`
-3. `figma-tokens.config.mjs`
-4. `figma-tokens.config.js`
-5. `figma-tokens.config.json`
+3. `figma-tokens.config.json`
+4. `.figma-tokensrc`
+5. `.figma-tokensrc.yaml`
+6. `.figma-tokensrc.yml`
+7. `.figma-tokensrc.json`
+
+A file named `.json` is read as JSON. Every other file is read as YAML, which includes the `.figma-tokensrc` file with no extension. Since JSON is valid YAML, that file may hold either. A script (`.js`, `.mjs`, `.cjs`, `.ts`, …) is not a config: it stops with `figma-tokens: <file> is a script; the config must be YAML or JSON`.
 
 With `--config`, that file is used and must exist. Relative `input` and `outDir` are resolved against the folder of the config file, so this works from any directory:
 

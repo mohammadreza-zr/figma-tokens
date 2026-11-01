@@ -354,14 +354,43 @@ test("CLI: a YAML config is found and its comments and block text work", () => {
   assert.match(tw, /^ {2}--radius: var\(--radius-md\);$/m);
 });
 
-test("CLI: .yml, .mjs and .js configs are found too", () => {
-  const yml = inTempProject({ "figma-tokens.config.yml": "input: tokens\noutDir: out\n" });
-  assert.equal(runIn(yml).status, 0);
-  for (const name of ["figma-tokens.config.mjs", "figma-tokens.config.js"]) {
-    const dir = inTempProject({ [name]: 'export default { input: "tokens", outDir: "out" };\n', "package.json": '{"type":"module"}' });
+test("CLI: .yml, .json and rc files are found, in every spelling", () => {
+  const body = "input: tokens\noutDir: out\n";
+  const json = '{"input":"tokens","outDir":"out"}';
+  const cases = {
+    "figma-tokens.config.yml": body,
+    "figma-tokens.config.json": json,
+    ".figma-tokensrc": body,
+    ".figma-tokensrc.yaml": body,
+    ".figma-tokensrc.yml": body,
+    ".figma-tokensrc.json": json,
+  };
+  for (const [name, content] of Object.entries(cases)) {
+    const dir = inTempProject({ [name]: content });
     assert.equal(runIn(dir).status, 0, name);
-    assert.ok(readFileSync(path.join(dir, "out/tokens.css"), "utf8").includes("--radius-md"));
+    assert.ok(readFileSync(path.join(dir, "out/tokens.css"), "utf8").includes("--radius-md"), name);
   }
+});
+
+test("an rc file may hold JSON, because JSON is valid YAML", () => {
+  const dir = inTempProject({ ".figma-tokensrc": '{ "input": "tokens", "outDir": "out" }' });
+  assert.equal(runIn(dir).status, 0);
+});
+
+test("a script is not a config, and the error says what to use", () => {
+  const dir = inTempProject({ "figma-tokens.config.mjs": 'export default { input: "tokens", outDir: "out" };\n' });
+  const r = runIn(dir, "--config", "figma-tokens.config.mjs");
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /figma-tokens\.config\.mjs is a script; the config must be YAML or JSON/);
+  assert.equal(runIn(dir).status, 1);
+});
+
+test("invalid YAML or JSON in the config is named in the error", () => {
+  const yaml = runIn(inTempProject({ "figma-tokens.config.yaml": "input: [tokens\n" }));
+  assert.equal(yaml.status, 1);
+  assert.match(yaml.stderr, /figma-tokens\.config\.yaml is not valid YAML/);
+  const json = runIn(inTempProject({ "figma-tokens.config.json": "{ bad" }));
+  assert.match(json.stderr, /figma-tokens\.config\.json is not valid JSON/);
 });
 
 test("a YAML file that is not a mapping is rejected", () => {

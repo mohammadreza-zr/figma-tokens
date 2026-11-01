@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 
 export interface FigmaTokensConfig {
@@ -117,10 +116,14 @@ export function resolveConfig(config: FigmaTokensConfig): ResolvedConfig {
 const CONFIG_NAMES = [
   "figma-tokens.config.yaml",
   "figma-tokens.config.yml",
-  "figma-tokens.config.mjs",
-  "figma-tokens.config.js",
   "figma-tokens.config.json",
+  ".figma-tokensrc",
+  ".figma-tokensrc.yaml",
+  ".figma-tokensrc.yml",
+  ".figma-tokensrc.json",
 ];
+
+const SCRIPT = /\.(c|m)?(j|t)s$/;
 
 export function findConfig(cwd: string, explicit?: string): string {
   if (explicit) {
@@ -138,21 +141,23 @@ export function findConfig(cwd: string, explicit?: string): string {
 }
 
 export async function loadConfig(file: string): Promise<FigmaTokensConfig> {
-  if (file.endsWith(".json")) {
-    return JSON.parse(readFileSync(file, "utf8")) as FigmaTokensConfig;
+  if (SCRIPT.test(file)) {
+    throw new Error(
+      `figma-tokens: ${file} is a script; the config must be YAML or JSON`,
+    );
   }
-  if (file.endsWith(".yaml") || file.endsWith(".yml")) {
-    const parsed: unknown = parseYaml(readFileSync(file, "utf8"));
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      throw new Error(`figma-tokens: ${file} must hold a mapping of options`);
-    }
-    return parsed as FigmaTokensConfig;
+  const text = readFileSync(file, "utf8").replace(/^\uFEFF/, "");
+  const isJson = file.endsWith(".json");
+  let parsed: unknown;
+  try {
+    parsed = isJson ? JSON.parse(text) : parseYaml(text);
+  } catch (error) {
+    throw new Error(
+      `figma-tokens: ${file} is not valid ${isJson ? "JSON" : "YAML"} (${(error as Error).message})`,
+    );
   }
-  const mod = (await import(pathToFileURL(file).href)) as {
-    default?: FigmaTokensConfig;
-  };
-  if (!mod.default) {
-    throw new Error(`figma-tokens: ${file} has no default export`);
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error(`figma-tokens: ${file} must hold a mapping of options`);
   }
-  return mod.default;
+  return parsed as FigmaTokensConfig;
 }

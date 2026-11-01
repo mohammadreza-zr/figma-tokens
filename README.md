@@ -53,7 +53,7 @@ extra: |
   --radius: var(--radius-md);
 ```
 
-The config can also be `.yml`, `.mjs`, `.js` or `.json`.
+The config can also be `.yml`, `.json` or an rc file (`.figma-tokensrc`). It is always data, never a script.
 
 ```bash
 npx @mrzr/figma-tokens           # writes generated/tokens.css and generated/tailwind.css

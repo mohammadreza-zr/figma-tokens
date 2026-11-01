@@ -1,6 +1,6 @@
 # Configuration
 
-The config is a file named `figma-tokens.config.yaml`, `.yml`, `.mjs`, `.js` or `.json` (searched in that order, in the folder you run the command from), or any file you pass with `--config`. YAML is the one the examples use. It allows comments and a block of CSS for `extra`:
+The config is data, not code: YAML or JSON. It is a file named `figma-tokens.config.yaml`, `.yml` or `.json`, or an rc file (`.figma-tokensrc` and its `.yaml`, `.yml` and `.json` variants), searched in the folder you run the command from in the order listed in [[CLI]], or any file you pass with `--config`. YAML is the one the examples use. It allows comments and a block of CSS for `extra`:
 
 <!-- verbatim: examples/basic/figma-tokens.config.yaml -->
 ```yaml
@@ -151,17 +151,13 @@ The same options as JSON, in `figma-tokens.config.json` (no comments, and `extra
 }
 ```
 
-Or as JavaScript, in `figma-tokens.config.mjs` (or `.js` in a project with `"type": "module"`), which default-exports the object. `defineConfig` only gives your editor the types:
+Or in an rc file, `.figma-tokensrc`, which holds YAML or JSON. It keeps the project root free of one more visible file:
 
-```js
-import { defineConfig } from "@mrzr/figma-tokens";
-
-export default defineConfig({
-  input: "tokens",
-  outDir: "generated",
-});
+```yaml
+input: tokens
+outDir: generated
 ```
 
 ## Errors
 
-A missing `input` or `outDir` stops with ``figma-tokens: `input` is required`` (or `outDir`). An unknown option stops with `figma-tokens: unknown option "<name>" (options: …)`. A YAML file that is not a mapping stops with `figma-tokens: <file> must hold a mapping of options`, and a `.mjs` or `.js` file without a default export with `figma-tokens: <file> has no default export`. See [[Troubleshooting]].
+A missing `input` or `outDir` stops with ``figma-tokens: `input` is required`` (or `outDir`). An unknown option stops with `figma-tokens: unknown option "<name>" (options: …)`. A config that is not valid YAML or JSON stops with `figma-tokens: <file> is not valid YAML (…)` (or `JSON`), one that is not a mapping with `figma-tokens: <file> must hold a mapping of options`, and a script with `figma-tokens: <file> is a script; the config must be YAML or JSON`. See [[Troubleshooting]].

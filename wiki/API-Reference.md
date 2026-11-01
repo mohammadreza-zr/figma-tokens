@@ -71,7 +71,7 @@ Applies every default ([[Configuration]]), merges `collections` over `DEFAULT_CO
 findConfig(cwd: string, explicit?: string): string
 ```
 
-Returns the absolute path of the config: `explicit` resolved against `cwd`, or the first of the five default names found in `cwd` (`.yaml`, `.yml`, `.mjs`, `.js`, `.json`, in that order). Throws `figma-tokens: no config at <file>` or `figma-tokens: no config found; create figma-tokens.config.yaml (see the README)`.
+Returns the absolute path of the config: `explicit` resolved against `cwd`, or the first of the default names found in `cwd`, in the order listed in [[CLI]]. Throws `figma-tokens: no config at <file>` or `figma-tokens: no config found; create figma-tokens.config.yaml (see the README)`.
 
 ## `loadConfig(file)`
 
@@ -79,7 +79,7 @@ Returns the absolute path of the config: `explicit` resolved against `cwd`, or t
 loadConfig(file: string): Promise<FigmaTokensConfig>
 ```
 
-Parses a `.yaml` or `.yml` file as YAML and a `.json` file as JSON; any other file is imported and its default export returned. Throws `figma-tokens: <file> must hold a mapping of options` for a YAML file that is not a mapping, and `figma-tokens: <file> has no default export` for a script without one. The paths in the result are **not** resolved: pass the folder of the config file as `cwd` to `generate`, as the CLI does.
+Parses a file ending in `.json` as JSON and any other file as YAML (JSON is valid YAML, so an rc file may hold either). Throws `figma-tokens: <file> is not valid YAML (…)` (or `JSON`), `figma-tokens: <file> must hold a mapping of options` when the content is not a mapping, and `figma-tokens: <file> is a script; the config must be YAML or JSON` for a `.js`, `.mjs`, `.cjs` or `.ts` file. The paths in the result are **not** resolved: pass the folder of the config file as `cwd` to `generate`, as the CLI does.
 
 ## `DEFAULT_COLLECTIONS`
 

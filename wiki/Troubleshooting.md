@@ -8,7 +8,7 @@ Every message below is what the tool prints. `<file>` and `<dir>` stand for abso
 
 ### `figma-tokens: no config found; create figma-tokens.config.yaml (see the README)`
 
-None of `figma-tokens.config.yaml`, `.yml`, `.mjs`, `.js`, `.json` is in the folder you ran the command from. Parent folders are not searched. `cd` to the right folder, or pass `--config <file>` ([[CLI]]).
+None of the config names listed in [[CLI]] (`figma-tokens.config.yaml`, `.yml`, `.json`, or `.figma-tokensrc` and its variants) is in the folder you ran the command from. Parent folders are not searched. `cd` to the right folder, or pass `--config <file>` ([[CLI]]).
 
 ### `figma-tokens: no config at <file>`
 
@@ -18,9 +18,13 @@ The file you gave to `--config` does not exist. The path is resolved against the
 
 The config has no such option ([[Configuration]]).
 
-### `figma-tokens: <file> has no default export`
+### `figma-tokens: <file> is a script; the config must be YAML or JSON`
 
-A `.mjs` or `.js` config must `export default` the object (use `defineConfig({ … })`).
+Configs are data. Write the same options as YAML or JSON ([[Configuration]]).
+
+### `figma-tokens: <file> is not valid YAML (<reason>)` / `… is not valid JSON (<reason>)`
+
+The config cannot be parsed. `<reason>` is the parser's message, with the position.
 
 ### `figma-tokens: <file> must hold a mapping of options`
 
