@@ -6,7 +6,7 @@ The input is a folder of `*.json` files in the shape Figma writes when you expor
 
 ## Which files are read
 
-- Every file in `input` whose name ends in `.json`, **not** in subfolders.
+- Every file in `input` whose name ends in `.json`, **not** in subfolders. Keep the tokens in a folder of their own: a `figma-tokens.config.json` or any other JSON file in the same folder would be read as tokens.
 - Sorted by file name. The files are merged deeply: groups with the same name are combined, and when two files define the same token, **the later file wins**.
 - At least one `.json` file must exist, and each must be valid JSON. The error names the file ([[Troubleshooting]]).
 

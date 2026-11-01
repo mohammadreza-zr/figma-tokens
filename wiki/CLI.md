@@ -83,4 +83,4 @@ Errors are printed to stderr as a single message that starts with `figma-tokens:
 }
 ```
 
-Run `npm run tokens:check` in CI, next to your tests. Commit the generated files so that the check has something to compare with.
+Run `npm run tokens:check` in CI, next to your tests. Commit the generated files so that the check has something to compare with. Line endings are ignored in the comparison, so a Windows checkout with CRLF still passes.

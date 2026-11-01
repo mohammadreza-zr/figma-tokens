@@ -317,3 +317,21 @@ test("with the documented @custom-variant, dark: follows the .dark class", async
   const css = compiler.build(["dark:bg-background"]);
   assert.match(css, /\.dark\\:bg-background:where\(\.dark, \.dark \*\) \{/);
 });
+
+test("a UTF-8 BOM at the start of a token file is ignored", async () => {
+  const dir = fromJson({
+    "a.json": `﻿${JSON.stringify({ Radius: { Md: { $type: "number", $value: 8 } } })}`,
+  });
+  const css = byName(await generate({ input: dir, outDir: "out", tailwind: false }, dir), "tokens.css");
+  assert.match(css, /--radius-md: 8px;/);
+});
+
+test("stale ignores line-ending differences, so a CRLF checkout still passes --check", async () => {
+  const files = await generate(config, example);
+  const dir = mkdtempSync(path.join(tmpdir(), "figma-tokens-"));
+  const crlf = files.map((f) => ({ ...f, path: path.join(dir, path.basename(f.path)) }));
+  for (const f of crlf) writeFileSync(f.path, f.content.replace(/\n/g, "\r\n"));
+  assert.deepEqual(stale(crlf), []);
+  writeFileSync(crlf[0].path, crlf[0].content.replace("8px", "9px"));
+  assert.deepEqual(stale(crlf), [crlf[0].path]);
+});

@@ -26,7 +26,7 @@ function readTokenFiles(dir: string): Tree[] {
   return names.map((name) => {
     const file = path.join(dir, name);
     try {
-      return JSON.parse(readFileSync(file, "utf8")) as Tree;
+      return JSON.parse(readFileSync(file, "utf8").replace(/^\uFEFF/, "")) as Tree;
     } catch (error) {
       throw new Error(`figma-tokens: ${file} is not valid JSON (${(error as Error).message})`);
     }
@@ -83,10 +83,14 @@ export function write(files: OutputFile[]): void {
   }
 }
 
+const lf = (text: string) => text.replace(/\r\n/g, "\n");
+
 export function stale(files: OutputFile[]): string[] {
   return files
     .filter(
-      (f) => !existsSync(f.path) || readFileSync(f.path, "utf8") !== f.content,
+      (f) =>
+        !existsSync(f.path) ||
+        lf(readFileSync(f.path, "utf8")) !== lf(f.content),
     )
     .map((f) => f.path);
 }
